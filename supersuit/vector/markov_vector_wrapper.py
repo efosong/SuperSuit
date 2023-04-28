@@ -117,3 +117,6 @@ class MarkovVectorEnv(gym.vector.VectorEnv):
         currently, not pettingzoo environments
         """
         return [False] * self.num_envs
+
+    def set_attr(self, name, values):
+        self.par_env.__setattr__(name, values)

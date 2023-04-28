@@ -120,3 +120,8 @@ class ConcatVecEnv(gym.vector.VectorEnv):
         return sum(
             [sub_venv.env_is_wrapped(wrapper_class) for sub_venv in self.vec_envs], []
         )
+
+    def set_attr(self, name, values):
+        # TODO really we should check whether values is a list (and if so, we should assign each item to one vec env)
+        for vec_env in self.vec_envs:
+            vec_env.set_attr(name, values)

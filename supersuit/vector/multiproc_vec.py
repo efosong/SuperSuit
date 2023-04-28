@@ -104,6 +104,9 @@ def async_loop(vec_env_constr, inpt_p, pipe, shared_obs, shared_rews, shared_ter
                     if data == "rgb_array":
                         comp_infos = render_result
 
+                elif name == "set_attr":
+                    comp_infos = vec_env.set_attr(*data)
+
                 else:
                     raise AssertionError("bad tuple instruction name: " + name)
             elif instr == "terminate":
@@ -120,8 +123,8 @@ class ProcConcatVec(gym.vector.VectorEnv):
     def __init__(
         self, vec_env_constrs, observation_space, action_space, tot_num_envs, metadata
     ):
-        raise NotImplementedError("The wrapper ProcConcatVec is temporarily depreciated whilst it is being debugged. "
-                                  "Please refer to https://github.com/Farama-Foundation/SuperSuit/pull/165 for more information, or to contact the devs in regard to this.")
+        #raise NotImplementedError("The wrapper ProcConcatVec is temporarily depreciated whilst it is being debugged. "
+        #                          "Please refer to https://github.com/Farama-Foundation/SuperSuit/pull/165 for more information, or to contact the devs in regard to this.")
         self.observation_space = observation_space
         self.action_space = action_space
         self.num_envs = num_envs = tot_num_envs
@@ -261,3 +264,9 @@ class ProcConcatVec(gym.vector.VectorEnv):
 
         results = self._receive_info()
         return sum(results, [])
+
+    def set_attr(self, name, values):
+        # TODO really we should check whether values is a list (and if so, we should assign each item to one vec env)
+        for pipe in self.pipes:
+            pipe.send(("set_attr", (name, values)))
+        self._receive_info()
