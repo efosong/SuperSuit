@@ -99,15 +99,16 @@ def async_loop(vec_env_constr, inpt_p, pipe, shared_obs, shared_rews, shared_ter
                 elif name == "env_is_wrapped":
                     comp_infos = vec_env.env_is_wrapped(data)
 
+                elif name == "render":
+                    render_result = vec_env.render(data)
+                    if data == "rgb_array":
+                        comp_infos = render_result
+
                 elif name == "set_attr":
                     comp_infos = vec_env.set_attr(*data)
 
                 else:
                     raise AssertionError("bad tuple instruction name: " + name)
-            elif instr == "render":
-                render_result = vec_env.render()
-                if vec_env.render_mode == "rgb_array":
-                    comp_infos = render_result
             elif instr == "terminate":
                 return
             else:
